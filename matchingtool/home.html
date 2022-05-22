@@ -14,7 +14,7 @@
     </header>
 
     <form method="post" action="" enctype="text/plain" id="fileinput">
-    <p>参加者名を入力したcsvファイルを選んでください。</p>
+        <p>参加者名を入力したcsvファイルを選んでください。</p>
         <input type="file" id="inputcsv" accept=".csv, .txt" required>
         <input type="button" id="decide" value="決定" onclick="homecontroller()">
     </form>
@@ -22,8 +22,11 @@
 
     <div id="loadresult"></div>
     <p></p>
-    <button id="match" hidden="hidden" onclick="matchcontroller()">マッチングを行う</button>
-    <button id="back" hidden="hidden" onclick="back()">ファイル選択に戻る</button>
+    <div id="match" hidden="hidden">
+        <button onclick="matchcontroller()">マッチングを行う</button>
+        <button onclick="back()">ファイル選択に戻る</button>
+    </div>
+
 
     <script src="mainscript.js"></script>
     <script src="registernew.js"></script>

@@ -9,7 +9,8 @@ function matchcontroller() {
 
     //マッチング結果を表示する
     document.getElementById("fileinput").style.display = "none";
-    document.getElementById("loadresult").style.display = "none";
+    document.getElementById("match").style.display = "none";
+    document.getElementById("loadresult").innerHTML = matchingToTable(matching);
 }
 
 //配列をwin降順に並べて返す
@@ -27,7 +28,7 @@ function sortByWin(array) {
 }
 
 
-//配列の上から順に2つずつ取って対戦組み合わせの配列[[組み合わせ], ...]を返す
+//配列の上から順に2つずつ取って対戦組み合わせの配列[[{}, {}], ...]を返す
 function makeMatches(array) {
     let matching = []; //対戦組み合わせ格納
 
@@ -43,15 +44,15 @@ function makeMatches(array) {
                 index++;
                 continue;
             } else {
-                matching.push([array[0].id, array[index].id]);
+                matching.push([array[0], array[index]]);
 
                 //マッチング済みの要素を削除
                 array.splice(index, 1);
                 array.shift();
             }
-        } else  {
+        } else {
             //組み合わせられる相手がいない場合、不戦勝(id=0)と組み合わせる
-            matching.push([array[0].id, 0]);
+            matching.push([array[0], bye]);
             array.shift();
         }
     }
@@ -75,7 +76,35 @@ function checkForeMatching(id, checked) {
     return boolean;
 }
 
-//マッチング用配列マッチング表用innerHTML作成
-function matchingToTable(array) {
 
+//マッチング用配列からマッチング表用innerHTML作成
+function matchingToTable(array) {
+    let tableno = 1; //対戦卓番号（1からカウントアップ）
+    let html = "<table>";
+
+    // ヘッダー
+    html += "<tr><thead>";
+    html += "<th>対戦卓</th><th>ID</th><th>名前</th>";
+    html += "</tr></thead>";
+
+    //各対戦組み合わせごとのタグを作成
+    html += "<tbody>";
+    array.forEach(match => {
+
+        for (let i = 0; i < 2; i++) {
+            let player = match[i];
+            if (i == 0) {
+                html += "<tr><td rowspan='2'>" + tableno + "</td>";
+                html += "<td>" + player.id + "</td><td>" + player.name + "</td></tr>";
+            } else {
+                html += "<tr><td>" + player.id + "</td><td>" + player.name + "</td></tr>";
+            }
+        };
+        tableno++;
+
+    });
+    html += "</tbody>";
+
+    html += "</table>";
+    return html;
 }

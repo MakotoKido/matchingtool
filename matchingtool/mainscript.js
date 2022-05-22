@@ -1,4 +1,5 @@
 let partlist = []; //参加者の情報を格納 構造[{id:num, name:String, win:num, lose:num, draw:num, opps: [ids]}]
+let bye = {id:0, name:"bye", win:0, lose:0, draw:0, opps:[]}; //不戦勝作成用のデータ
 let round = 0; //ラウンド数管理
 let fileReader = new FileReader();
 
@@ -60,7 +61,7 @@ function partlistToTable() {
         //参加者ID、名前、勝ち、負け、引分 までのタグ生成
         html += "<td>" + player.id + "</td><td>" + player.name + "</td><td>" + player.win + "</td><td>" + player.lose + "</td><td>" + player.draw + "</td>";
 
-        //これまでの対戦相手の表示 カンマで切り分けて順番に表示するだけ
+        //これまでの対戦相手の表示 カンマで切り分けて順番に表示する
         if (player.opps.length == 0) {
             html += "<td>未</td>"
         } else {

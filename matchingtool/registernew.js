@@ -23,7 +23,6 @@ function homecontroller() {
     };
 
     document.getElementById("match").hidden = false;
-    document.getElementById("back").hidden = false;
 }
 
 
