@@ -1,4 +1,4 @@
-//home.htmlを制御
+//参加者の新規登録を制御
 
 
 function homecontroller() {
@@ -19,7 +19,7 @@ function homecontroller() {
 
         iniArray(playername);
 
-        document.getElementById("loadresult").innerHTML = partlistToTable();
+        document.getElementById("table").innerHTML = partlistToTable();
     };
 
     document.getElementById("match").hidden = false;

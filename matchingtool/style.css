@@ -1,11 +1,13 @@
 
 body {
     background-color: azure;
+    text-align: center;
 }
 
 table {
     border: solid 2px; 
     border-collapse: collapse;
+    margin: auto;
 }
 
 table th {
