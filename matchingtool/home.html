@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--処理をすべてこのページで完結させる -->
+<!--今回はこのページだけで操作を完結させる-->
 <html>
 
 <head>
@@ -11,51 +11,27 @@
 <body>
     <header>
         <h1>マッチング作成ツール</h1>
-        <!-- パンくずリスト（メソッド実装、バックアップ読み込み、ランキング表示）を置きたい -->
     </header>
 
-    <!-- テーブルの上下に必要なボタンを配置 スクリプトで表示や有効無効を制御-->
+    <button type="button" id="fileoutput">参加者情報入力テンプレートをDL</button> <!-- utf-8のみのDLになるので説明書必須 -->
 
     <form id="fileinput">
         <p>参加者名を入力したcsvファイルを選んでください。</p>
         <input type="file" id="inputcsv" accept=".csv" required>
-        <input type="button" id="load" value="読込" onclick="registerController()">
+        <input type="button" id="decide" value="決定">
     </form>
 
-    <form class="checkresult" hidden="hidden">
-        <button type="button" onclick="checkResult()" disabled>ラウンド結果を確認</button>
-    </form>
-
-    <!-- テーブル中HTMLは直接書き込まない -->
     <div id="table"></div>
-    <!-- テーブル中HTMLは直接書き込まない -->
-
-    <form id="match" hidden="hidden">
-        <button type="button" onclick="matchcontroller()">マッチングを行う</button>
-        <button type="button" onclick="backToFileChoice()">ファイル選択に戻る</button>
-    </form>
-
-    <form class="checkresult" hidden="hidden">
-        <button type="button" onclick="checkResult()" disabled>ラウンド結果を確認</button>
-    </form>
-
-    <form id="commitresult" hidden="hidden">
-        <button type="button" onclick="registerResult()">確定</button>
-        <button type="button" onclick="backToInput()">修正</button>
-    </form>
-
-    <form id="proceed" hidden="hidden">
-        <button type="button" onclick="proceedToNext()">次のラウンドへ</button>
-    </form>
-    <form id="ranking" hidden="hidden">
-        <button type="button" onclick="showRanking()">順位を表示</button>
-    </form>
-
+    <p></p>
+    <div id="match" hidden="hidden">
+        <button onclick="matchcontroller()">マッチングを行う</button>
+        <button onclick="back()">ファイル選択に戻る</button>
+    </div>
 
 
     <script src="mainscript.js"></script>
     <script src="registernew.js"></script>
-    <script src="matchscript.js"></script>
+    <script src="match.js"></script>
 </body>
 
 </html>
