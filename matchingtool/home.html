@@ -11,18 +11,26 @@
 
 <body>
     <header>
-        <h1>マッチング作成ツール</h1>        
+        <h1>マッチング作成ツール</h1>
     </header>
 
-    <!-- テーブルの上下に必要なボタンを配置 スクリプトで表示や有効無効を制御-->    
-    <button type="button" id="buplayer" onclick="createBackUp()">結果のバックアップ</button>
-    <button type="button" id="buround" onclick="createBackUp()">マッチングのバックアップ</button>
+    <!-- テーブルの上下に必要なボタンを配置 スクリプトで表示や有効無効を制御-->
+
+    <button type="button" id="buplayer" onclick="createBackUp()">バックアップをDL</button>
+    <button type="button" id="loadbackup" onclick="goToBackup()">バックアップの読み込み</button>
     <button type="button" id="reload" onclick="initialize()" style="background-color: black; color: white;">初めに戻る</button>
 
     <form id="fileinput">
-        <p>参加者名を入力したcsvファイルを選んでください。</p>
+        <p>参加者名を入力したcsvファイル（UTF-8形式、ヘッダーに「参加者名」）を選んでください。</p>
         <input type="file" id="inputcsv" accept=".csv" required>
         <input type="button" id="load" value="読込" onclick="registerController()">
+    </form>
+
+    <form id="backupin" hidden="hidden">
+        <p>ダウンロードしたバックアップ(r~backup.csv)を選んでください。</p>
+        <input type="file" id="inputbackup" accept=".csv" required>
+        <input type="button" value="読込" onclick="loadBackup()">
+        <button type="button" onclick="hideButton('backupin', true)">キャンセル</button>
     </form>
 
     <form class="checkresult" hidden="hidden">

@@ -126,7 +126,6 @@ function hideCheckBtn(boolean) {
 }
 
 
-
 //ファイル選択に戻る
 function backToFileChoice() {
     // 各種ボタンの有効無効を元に戻す
@@ -180,6 +179,7 @@ function createBackUp(e) {
     writeCsv(str);
 }
 
+
 //文字列をcsvに書きだす
 function writeCsv(string) {
     let blob = new Blob([string], { type: "text/csv" });
@@ -208,4 +208,10 @@ function partlistToCsvString(array) {
     }
 
     return str;
+}
+
+
+//バックアップ読み込み画面に遷移
+function goToBackup(){
+    hideButton("backupin", false);
 }

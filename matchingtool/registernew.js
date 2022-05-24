@@ -7,7 +7,7 @@ function registerController() {
     document.getElementById("inputcsv").disabled = true;
     document.getElementById("load").disabled = true;
 
-    loadfile("inputcsv","shift-jis");
+    loadfile("inputcsv", "UTF-8");
 
     //受け取ったファイルを配列に格納していく
     fileReader.onload = () => {
@@ -26,8 +26,27 @@ function registerController() {
     hideButton("match", false);
 }
 
-function loadBackup(){
-    
+
+//createBackUp()で作成したcsvを読み込み
+function loadBackup() {
+    loadfile("inputbackup", "UTF-8");
+
+    fileReader.onload = () => {
+        //行単位で分ける（CRLFに対応）
+        //round, partlistを復元
+        let result = fileReader.result.split("\r\n");
+        //result[0]はバックアップのモード識別用 今回は使わない
+        round = result[1].slice(0, result[1].length);
+
+        let header = result[2].split(","); //連想配列のキー
+        // for*********************************************resultを2次元配列にするとこから始める
+        for (let i = 3; i < result.length; i++) {
+            partlist.push({});
+            for (let j = 0; j < header.length; j++) {
+                partlist[i-2][header[j]] = result[]
+            }
+        }
+    }
 }
 
 
