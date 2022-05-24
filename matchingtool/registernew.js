@@ -1,10 +1,10 @@
 //参加者の新規登録を制御
 
 
-function homecontroller() {
+function registerController() {
     //誤操作防止のため、ファイル決定後はファイル操作ボタンを無効にする
     document.getElementById("inputcsv").disabled = true;
-    document.getElementById("decide").disabled = true;
+    document.getElementById("load").disabled = true;
 
     loadfile("inputcsv");
 
@@ -22,17 +22,17 @@ function homecontroller() {
         document.getElementById("table").innerHTML = partlistToTable();
     };
 
-    document.getElementById("match").hidden = false;
+    hideButton("match", false);
 }
 
 
-function back() {
+function backToFileChoice() {
     //「ファイル選択に戻る」が押されたら戻る
     // 各種ボタンの有効無効を元に戻す
     document.getElementById("inputcsv").disabled = false;
     document.getElementById("decide").disabled = false;
-    document.getElementById("match").hidden = true;
-    document.getElementById("back").hidden = true;
+    hideButton("match", true);
+    hideButton("back", true);
 
     //入力したグローバル関数をリセット
     partlist = [];

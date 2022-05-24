@@ -1,33 +1,50 @@
 //マッチングを制御
 
 let round = 0; //ラウンド数管理
-let escpartlist = []; //マッチングが確定するまでpartlistは書き換えられないようにする 
 let matchids = [];
 let matching = [];
+let resultaccepted = 0;
 
+//マッチング作成、表示を制御
 function matchcontroller() {
+    let escpartlist = []; //マッチングが確定するまでpartlistは書き換えられないようにする 
     round++;
 
-    escpartlist = partlist.slice(0, partlist.length); //実体をコピー
-    escpartlist = shuffle(escpartlist);
-    escpartlist = sortByWin(escpartlist);
-    matching = makeMatches(escpartlist.slice(0, escpartlist.length));
+    escpartlist = JSON.parse(JSON.stringify(partlist)); //ディープコピーを作成
+    shuffle(escpartlist);
+    sortByWin(escpartlist);
+    matching = makeMatches(JSON.parse(JSON.stringify(escpartlist))); //配列要素の消去が伴うのでここでもディープコピー
 
-    //マッチング結果を表示する
-    document.getElementById("fileinput").style.display = "none";
-    document.getElementById("match").style.display = "none";
+    //マッチング結果、結果入力画面を表示する
+    hideButton("fileinput", true);
+    hideButton("match", true);
     document.getElementById("table").innerHTML = matchingToTable(matching);
-
     addELToBtn();
+
+    //結果確認ボタンを表示、無効化（結果入力の段階で全対戦分集まったら有効になる）
+    hideCheckBtn(false);
+    disableCheckBtn(true);
+    resultaccepted = 0;
 }
+
+
+// 結果表示を制御
+function checkResult() {
+    hideCheckBtn(true);
+
+    //結果確認画面を表示
+    document.getElementById("table").innerHTML = resultToTable(matching);
+    hideButton("commitresult", false);
+}
+
 
 //配列をwin降順に並べて返す
 function sortByWin(array) {
     array.sort(function (a, b) {
         if (a.win > b.win) {
-            return 1;
-        } else if (a.win < b.win) {
             return -1;
+        } else if (a.win < b.win) {
+            return 1;
         } else {
             return 0;
         }
@@ -38,7 +55,7 @@ function sortByWin(array) {
 
 //配列の上から順に2つずつ取って対戦組み合わせの配列[[{}, {}], ...]を返す
 function makeMatches(array) {
-    let matching = []; //対戦組み合わせ格納
+    let match = []; //対戦組み合わせ格納
 
     while (array[0] != undefined) {//arrayが空になるまでやる
         let index = 1;//組み合わせ対象のインデックス
@@ -52,7 +69,7 @@ function makeMatches(array) {
                 index++;
                 continue;
             } else {
-                matching.push([array[0], array[index]]);
+                match.push([array[0], array[index]]);
 
                 //マッチング済みの要素を削除
                 array.splice(index, 1);
@@ -60,21 +77,23 @@ function makeMatches(array) {
             }
         } else {
             //組み合わせられる相手がいない場合、不戦勝(id=0)と組み合わせる
-            matching.push([array[0], bye]);
+            match.push([array[0], bye]);
             array.shift();
         }
     }
 
-    return matching;
+    return match;
 }
 
 
 //第一引数の対戦IDが、第二引数の対戦相手idを持つ人の今までの対戦相手(配列opps)に存在するか(=対戦したことがあるか)のbooleanを返す
+//ここからチェック！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 function checkForeMatching(id, checked) {
     let boolean = false;
 
     partlist.forEach(element => {
         if (element.id == checked) {
+            console.log(element.opps.indexOf(parseInt(id)));
             if (element.opps.indexOf(id) != -1) {
                 boolean = true;
             }
@@ -85,7 +104,7 @@ function checkForeMatching(id, checked) {
 }
 
 
-//マッチング用配列からマッチング表用innerHTML作成
+//マッチング用配列からマッチング表用HTML作成
 function matchingToTable(array) {
     let tableno = 1; //対戦卓番号（1からカウントアップ）
     let html = "<table><caption>" + round + "回戦対戦組み合わせ</caption>";
@@ -106,13 +125,13 @@ function matchingToTable(array) {
 
                 html += "<tr><td rowspan='2'>" + tableno + "</td>";
                 html += "<td>" + player.id + "</td><td>" + player.name + "</td>";
-                html += "<td><label><input type='radio' name='res" + player.id + "' value='win'>勝ち</label><label><input type='radio' name='res" + player.id + "' value='lose'>負け</label></td>";
+                html += "<td><label><input type='radio' name='res" + player.id + "' value='勝ち'>勝ち</label><label><input type='radio' name='res" + player.id + "' value='負け'>負け</label></td>";
                 html += "<td rowspan='2'><input type='button' id='" + matchid + "' value='送信'></td></tr>";
 
                 matchids.push(matchid);
             } else {
                 html += "<tr><td>" + player.id + "</td><td>" + player.name + "</td>";
-                html += "<td><label><input type='radio' name='res" + player.id + "' value='win'>勝ち</label><label><input type='radio' name='res" + player.id + "' value='lose'>負け</label></td></tr>";
+                html += "<td><label><input type='radio' name='res" + player.id + "' value='勝ち'>勝ち</label><label><input type='radio' name='res" + player.id + "' value='負け'>負け</label></td></tr>";
             }
         };
         tableno++;
@@ -124,7 +143,7 @@ function matchingToTable(array) {
     return html;
 }
 
-//作成した送信ボタンにイベントを追加
+//作成した送信ボタンにacceptResultのイベントを追加
 function addELToBtn() {
     matchids.forEach(matchid => {
         let element = document.getElementById(matchid)
@@ -133,7 +152,7 @@ function addELToBtn() {
 }
 
 
-//tableに入力された結果を受け取る
+//tableに入力された結果を受け取ってmatchingに格納
 function acceptResult(e) {
     let ids = this.id.split("_"); //[tableno, 対戦者1のid, 対戦者2のid]
     let results = [];//対戦者1, 対戦者2の結果を格納
@@ -149,7 +168,7 @@ function acceptResult(e) {
     }
 
     //入力の制御
-    if (results[0] == "win" && results[1] == "win") {
+    if (results[0] == "勝ち" && results[1] == "勝ち") {
         //両者勝ちは受け付けない
         alert("両者勝ちになっています。結果を入力しなおしてください。");
     } else if (results[1] == undefined) {
@@ -163,16 +182,109 @@ function acceptResult(e) {
         for (let i = 0; i < results.length; i++) {
             matching[ids[0] - 1][i].result = results[i];
         }
-        //このままだと上書き時無限にoppsが追加されていくのでround数で判定を作る
-        matching[ids[0] - 1][0].opps.push(ids[2].slice(0, ids[2]));
-        matching[ids[0] - 1][1].opps.push(ids[1].slice(0, ids[1]));
-    }
 
-    alert("")
+        //oppsはそのラウンドで登録されていない場合のみ追加（上書き時に相手が変更になることは想定しない）
+        if (matching[ids[0] - 1][0].opps.length < round) {
+            matching[ids[0] - 1][0].opps.push(ids[2].slice(0, ids[2].length));
+            matching[ids[0] - 1][1].opps.push(ids[1].slice(0, ids[1].length));
+            resultaccepted++;
+        }
+        alert("結果入力を受け付けました。");
+
+        if (resultaccepted >= matching.length) {
+            disableCheckBtn(false);
+        }
+    }
 }
 
 
-//確定した結果をグローバル関数partlistに反映
-function registerResult() {
+//結果確認ボタンの有効無効を操作
+function disableCheckBtn(boolean) {
+    let commitbuttons = document.getElementsByClassName("checkresult");
+    commitbuttons[0][0].disabled = boolean;
+    commitbuttons[1][0].disabled = boolean;
+}
 
+
+//結果入力後のmatchingから結果のみを反映した表のHTML作成
+function resultToTable(array) {
+    let tableno = 1; //対戦卓番号（1からカウントアップ）
+    let html = "<table><caption>" + round + "回戦 対戦結果</caption>";
+
+    // ヘッダー
+    html += "<tr><thead>";
+    html += "<th>対戦卓</th><th>ID</th><th>名前</th><th>結果</th>";
+    html += "</tr></thead>";
+
+    //各対戦組み合わせごとのタグを作成
+    html += "<tbody>";
+    array.forEach(match => {
+
+        for (let i = 0; i < 2; i++) {
+            let player = match[i];
+            if (player.result == undefined) {
+                alert("結果読み込み時にエラーが発生しました");
+                break;
+            } else {
+                if (i == 0) {
+                    html += "<tr><td rowspan='2'>" + tableno + "</td>";
+                    html += "<td>" + player.id + "</td><td>" + player.name + "</td>";
+                    html += "<td>" + player.result + "</td></tr>";
+                } else {
+                    html += "<tr><td>" + player.id + "</td><td>" + player.name + "</td>";
+                    html += "<td>" + player.result + "</td></tr>";
+                };
+
+            }
+        };
+        tableno++;
+    });
+    html += "</tbody>";
+
+    html += "</table>";
+    return html;
+}
+
+
+//確定した対戦結果(matching内resultとopps)をグローバル関数partlistに反映 
+function registerResult() {
+    //不戦勝以外のマッチングリストにある参加者すべてについて個別に結果を反映
+    matching.forEach(array => {
+        array.forEach(player => {
+            if (player.id != 0) {
+                partlist[player.id - 1].opps = JSON.parse(JSON.stringify(player.opps));
+                if (player.result == "勝ち") {
+                    partlist[player.id - 1].win += 1;
+                } else if (player.result == "負け") {
+                    partlist[player.id - 1].lose += 1;
+                }
+            }
+        })
+    });
+    alert(round + "回戦の結果を確定しました。");
+    hideButton("proceed", false);
+    hideButton("ranking", false);
+    hideButton("commitresult", true);
+}
+
+
+// 確認画面から結果入力に戻る
+function backToInput() {
+    hideButton("commitresult", true);
+
+    //マッチング表を作成しなおす
+    document.getElementById("table").innerHTML = matchingToTable(matching);
+    addELToBtn();
+    hideCheckBtn(false);
+}
+
+
+//ラウンドで作成したmatchids, matching, resultacceptedを初期化して次ラウンドのマッチング
+function proceedToNext() {
+    matchids = [];
+    matching = [];
+    resultaccepted = 0;
+    hideButton("proceed", true);
+
+    matchcontroller();
 }

@@ -1,6 +1,9 @@
+//参加者情報の管理、画面の管理を行う
+
 let partlist = []; //参加者の情報を格納 構造[{id:num, name:String, win:num, lose:num, draw:num, opps: [ids]}]
-let bye = {id:0, name:"bye", win:0, lose:0, draw:0, opps:[]}; //不戦勝作成用のデータ
+let bye = { id: 0, name: "bye", win: 0, lose: 0, opps: [] }; //不戦勝作成用のダミープレイヤー
 let fileReader = new FileReader();
+
 
 //csvファイルを読み込んでfileReaderに格納
 function loadfile(id) {
@@ -87,3 +90,28 @@ function shuffle(array) {
     }
     return array;
 }
+
+
+//idが振られているボタン表示非表示を操作
+function hideButton(id, boolean) {
+    document.getElementById(id).hidden = boolean;
+}
+
+
+//結果確認ボタン(2つあるためclassを振っている)の表示を操作
+function hideCheckBtn(boolean) {
+    let commitbuttons = document.getElementsByClassName("checkresult");
+    commitbuttons[0].hidden = boolean;
+    commitbuttons[1].hidden = boolean;
+}
+
+
+//連想配列内の要素を探してインデックスを返す 使わない気もするのでコメントアウト
+// function getIndex(value, arr, prop) {
+//     for(let i = 0; i < arr.length; i++) {
+//         if(arr[i][prop] == value) {
+//             return i;
+//         }
+//     }
+//     return -1; //値が存在しなかったとき
+// }

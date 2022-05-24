@@ -8,6 +8,7 @@ table {
     border: solid 2px; 
     border-collapse: collapse;
     margin: auto;
+    padding: 30px;
 }
 
 table th {
