@@ -1,16 +1,17 @@
-//参加者の新規登録を制御
-let decide = document.getElementById("decide");
+//参加者情報の読み込みを制御
 
-function homecontroller() {
+
+//新規ファイルの読み込み、参加者リストの反映
+function registerController() {
     //誤操作防止のため、ファイル決定後はファイル操作ボタンを無効にする
     document.getElementById("inputcsv").disabled = true;
-    document.getElementById("decide").disabled = true;
+    document.getElementById("load").disabled = true;
 
-    loadfile("inputcsv");
+    loadfile("inputcsv","shift-jis");
 
     //受け取ったファイルを配列に格納していく
     fileReader.onload = () => {
-        //行単位で分ける（注意事項参照、CRLFに対応）
+        //行単位で分ける（CRLFに対応）
         let playername = fileReader.result.split("\r\n");
 
         // ヘッダーを切り分ける
@@ -22,30 +23,31 @@ function homecontroller() {
         document.getElementById("table").innerHTML = partlistToTable();
     };
 
-    document.getElementById("match").hidden = false;
+    hideButton("match", false);
 }
 
-decide.onclick = homecontroller;
-
-//「ファイル選択に戻る」が押されたら戻る
-function back() {
-    // 各種ボタンの有効無効を元に戻す
-    document.getElementById("inputcsv").disabled = false;
-    document.getElementById("decide").disabled = false;
-    document.getElementById("match").hidden = true;
-
-    //入力したグローバル関数をリセット
-    partlist = [];
-    fileReader = new FileReader();
-
-    document.getElementById("table").innerHTML = "";
+function loadBackup(){
+    
 }
+
+
+//csvファイルを読み込んでfileReaderに格納
+function loadfile(id, encode) {
+    try {
+        let fileInput = document.getElementById(id);
+        let file = fileInput.files[0];
+
+        fileReader.readAsText(file, encode);
+
+    } catch (e) {
+        alert("ファイルの読み込みに失敗しました");
+    }
+}
+
 
 //参加者名の配列からpartlistを初期化
 function iniArray(namearrray) { //参加者名のみの1次元配列を受け取る
     let id = 1; //参加者ID初期値
-    const iniresult = 0; //勝敗引き分け初期値
-    let opps = []; //対戦相手ID格納用配列
 
     namearrray.forEach(playername => {
         if (playername != "") { //名前欄が空の場合は登録しない
@@ -56,10 +58,9 @@ function iniArray(namearrray) { //参加者名のみの1次元配列を受け取
             id++;
 
             player["name"] = playername;
-            player["win"] = iniresult;
-            player["lose"] = iniresult;
-            player["draw"] = iniresult
-            player["opps"] = opps;
+            player["win"] = 0;
+            player["lose"] = 0;
+            player["opps"] = [];
 
             partlist.push(player);
         }

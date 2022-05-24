@@ -2,18 +2,14 @@
 body {
     background-color: azure;
     text-align: center;
-}
-
-header {
-    text-align: center;
+    min-width: 400px;
 }
 
 table {
     border: solid 2px; 
     border-collapse: collapse;
     margin: auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    padding: 30px;
 }
 
 table th {

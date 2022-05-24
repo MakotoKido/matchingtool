@@ -1,9 +1,5 @@
 //マッチングを制御
 
-let round = 0; //ラウンド数管理
-let matchids = [];
-let matching = [];
-let resultaccepted = 0;
 
 //マッチング作成、表示を制御
 function matchcontroller() {
@@ -18,6 +14,7 @@ function matchcontroller() {
     //マッチング結果、結果入力画面を表示する
     hideButton("fileinput", true);
     hideButton("match", true);
+    hideButton("ranking", false);
     document.getElementById("table").innerHTML = matchingToTable(matching);
     addELToBtn();
 
@@ -38,27 +35,12 @@ function checkResult() {
 }
 
 
-//配列をwin降順に並べて返す
-function sortByWin(array) {
-    array.sort(function (a, b) {
-        if (a.win > b.win) {
-            return -1;
-        } else if (a.win < b.win) {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
-    return array;
-}
-
-
 //配列の上から順に2つずつ取って対戦組み合わせの配列[[{}, {}], ...]を返す
 function makeMatches(array) {
     let match = []; //対戦組み合わせ格納
-
+    let index = 1;
     while (array[0] != undefined) {//arrayが空になるまでやる
-        let index = 1;//組み合わせ対象のインデックス
+        //組み合わせ対象のインデックス
 
         //組み合わせ対象の存在チェック
         if (array[index] != undefined) {
@@ -74,6 +56,7 @@ function makeMatches(array) {
                 //マッチング済みの要素を削除
                 array.splice(index, 1);
                 array.shift();
+                index = 1;
             }
         } else {
             //組み合わせられる相手がいない場合、不戦勝(id=0)と組み合わせる
@@ -87,14 +70,12 @@ function makeMatches(array) {
 
 
 //第一引数の対戦IDが、第二引数の対戦相手idを持つ人の今までの対戦相手(配列opps)に存在するか(=対戦したことがあるか)のbooleanを返す
-//ここからチェック！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 function checkForeMatching(id, checked) {
     let boolean = false;
 
     partlist.forEach(element => {
-        if (element.id == checked) {
-            console.log(element.opps.indexOf(parseInt(id)));
-            if (element.opps.indexOf(id) != -1) {
+        if (element.id == checked) {        
+            if (element.opps.indexOf(String(id)) != -1) {
                 boolean = true;
             }
         }
@@ -265,17 +246,6 @@ function registerResult() {
     hideButton("proceed", false);
     hideButton("ranking", false);
     hideButton("commitresult", true);
-}
-
-
-// 確認画面から結果入力に戻る
-function backToInput() {
-    hideButton("commitresult", true);
-
-    //マッチング表を作成しなおす
-    document.getElementById("table").innerHTML = matchingToTable(matching);
-    addELToBtn();
-    hideCheckBtn(false);
 }
 
 
