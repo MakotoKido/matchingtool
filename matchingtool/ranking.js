@@ -2,7 +2,7 @@
 
 function rankingController() {
     let ranking = listToRanking();
-    document.getElementById("table").innerHTML = rankingToTable(ranking);
+    changeTable(rankingToTable(ranking));
 
     hideCheckBtn(true);
     hideButton("ranking", true);

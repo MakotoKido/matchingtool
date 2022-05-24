@@ -15,7 +15,7 @@ function matchcontroller() {
     hideButton("fileinput", true);
     hideButton("match", true);
     hideButton("ranking", false);
-    document.getElementById("table").innerHTML = matchingToTable(matching);
+    changeTable(matchingToTable(matching));
     addELToBtn();
 
     //結果確認ボタンを表示、無効化（結果入力の段階で全対戦分集まったら有効になる）
@@ -30,7 +30,7 @@ function checkResult() {
     hideCheckBtn(true);
 
     //結果確認画面を表示
-    document.getElementById("table").innerHTML = resultToTable(matching);
+    changeTable(resultToTable(matching));
     hideButton("commitresult", false);
 }
 

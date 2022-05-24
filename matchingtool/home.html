@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>マッチング作成ツール</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="logo.png">
@@ -60,13 +60,14 @@
     <form id="proceed" hidden="hidden">
         <button type="button" onclick="proceedToNext()">次のラウンドへ</button>
     </form>
-    <form id="backtomatch" hidden="hidden">
-        <button type="button" onclick="backToInput()">対戦表に戻る</button>
+    <form id="confirmchange" hidden="hidden">
+        <p id="roundconfirm"></p>
+        <button type="button" onclick="confirmChange()">上記を復元</button>
     </form>
-    <form id="ranking" hidden="hidden">
-        <p></p>
-        <button type="button" onclick="rankingController()">順位を表示</button>
-    </form>
+        <button type="button" onclick="backToInput()" id="backtomatch" hidden="hidden">対戦表に戻る</button>
+
+        <button type="button" onclick="rankingController()" id="ranking" hidden="hidden">順位を表示</button>
+
 
 
 

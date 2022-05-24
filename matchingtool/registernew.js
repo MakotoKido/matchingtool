@@ -20,7 +20,7 @@ function registerController() {
 
         iniArray(playername);
 
-        document.getElementById("table").innerHTML = partlistToTable();
+        changeTable(partlistToTable(partlist));
     };
 
     hideButton("match", false);
@@ -31,22 +31,50 @@ function registerController() {
 function loadBackup() {
     loadfile("inputbackup", "UTF-8");
 
+
     fileReader.onload = () => {
         //行単位で分ける（CRLFに対応）
-        //round, partlistを復元
+        //partlistを復元
         let result = fileReader.result.split("\r\n");
         //result[0]はバックアップのモード識別用 今回は使わない
-        round = result[1].slice(0, result[1].length);
 
-        let header = result[2].split(","); //連想配列のキー
-        // for*********************************************resultを2次元配列にするとこから始める
-        for (let i = 3; i < result.length; i++) {
-            partlist.push({});
+        let header = result[1].split(","); //連想配列のキー        
+        let data = "";
+        for (let i = 2; i < result.length; i++) {
+            data = result[i].split(",");
+            backuplist.push({});
             for (let j = 0; j < header.length; j++) {
-                partlist[i-2][header[j]] = result[]
+                if (header[j] == "opps") {
+                    //oppsはさらに配列に
+                    let opps = data[j].split("_");
+                    backuplist[i - 2][header[j]] = opps;
+                    if (point == "") {
+                        point = opps.length;
+                    }
+                } else {
+                    backuplist[i - 2][header[j]] = data[j].slice(0, data[j].length);
+                }
+
             }
         }
+        changeTable(partlistToTable(backuplist));
+        hideButton("backtomatch", false);
+        hideButton("ranking", false);
+        hideButton("confirmchange", false);
+        document.getElementById("roundconfirm").innerHTML = point + "回戦時点の内容を復元";
+
+
     }
+}
+
+function confirmChange() {
+    partlist = JSON.parse(JSON.stringify(backuplist));
+    backuplist = [];
+    round = point;
+    point = "";
+    hideButton("backupin", true);
+    hideButton("confirmchange", true);
+    hideButton("match", false);
 }
 
 

@@ -10,11 +10,14 @@ let matchids = [];
 let matching = [];
 let resultaccepted = 0;
 
+//バックアップ一時保存用
+let backuplist =[];
+let point = "";
 
 
 //参加者リストを表にするinnerHTML文字列生成
-function partlistToTable() {
-    let html = "<table>";
+function partlistToTable(array) {
+    let html = "<table><caption>以下の内容で登録します</caption>";
 
     //ヘッダー
     html += "<tr><thead>";
@@ -24,7 +27,7 @@ function partlistToTable() {
     html += "<tbody>";
 
     //一人ずつ要素を作成    
-    partlist.forEach(player => {
+    array.forEach(player => {
         html += "<tr>";
 
         //参加者ID、名前、勝ち、負け までのタグ生成
@@ -102,6 +105,7 @@ function sortByOMW(array) {
     return array;
 }
 
+
 //配列を完全ランダムにシャッフルして返す
 function shuffle(array) {
     for (let i = array.length - 1; i >= 0; i--) {
@@ -112,6 +116,10 @@ function shuffle(array) {
 }
 
 
+//table内の表示を操作
+function changeTable(html) {
+    document.getElementById("table").innerHTML = html;
+}
 //idが振られているボタン表示非表示を操作
 function hideButton(id, boolean) {
     document.getElementById(id).hidden = boolean;
@@ -138,7 +146,7 @@ function backToFileChoice() {
     partlist = [];
     fileReader = new FileReader();
 
-    document.getElementById("table").innerHTML = "";
+    changeTable("");
 }
 
 
@@ -147,7 +155,7 @@ function backToInput() {
     hideButton("commitresult", true);
 
     //マッチング表を作成しなおす
-    document.getElementById("table").innerHTML = matchingToTable(matching);
+    changeTable(matchingToTable(matching));
     addELToBtn();
     hideCheckBtn(false);
     hideButton("ranking", false);
@@ -164,18 +172,12 @@ function initialize() {
 
 //バックアップ作成
 function createBackUp(e) {
-    // let array = [];
-    // let str = arrayToCsvString(array);
-    // 文字列は場合分けして作る
     let str = "";
-    if (document.activeElement.id == "buplayer") {
-        //round, partlistをバックアップ
-        str += "0\r\n"; //バックアップのモードを1行目に
-        str += round + "\r\n";
-        str += partlistToCsvString(partlist);
-    } else if (document.activeElement.id == "buround") {
-        //round, partlist, matchids, matchingをバックアップ
-    }
+
+    //partlistをバックアップ
+    str += "0\r\n"; //バックアップのモードを1行目に
+    str += partlistToCsvString(partlist);
+
     writeCsv(str);
 }
 
@@ -195,10 +197,13 @@ function partlistToCsvString(array) {
     let str = "id,name,win,lose,opps\r\n"; //1行目ヘッダー部分
     array.forEach(inarray => {
         //2次元目の要素を取り出してカンマで区切る
-        str+=inarray.id+","+inarray.name+","+inarray.win+","+inarray.lose+",";
+        str += inarray.id + "," + inarray.name + "," + inarray.win + "," + inarray.lose + ",";
         inarray.opps.forEach(element => {
-            str+=element+"_"; //oppsの内容は_で区切る
+            str += element + "_"; //oppsの内容は_で区切る
         });
+        if(str.endsWith("_")){
+            str = str.slice(0,-1);
+        }
 
         str += "\r\n"; // 1次元目の区切りで改行を入れる
     });
@@ -211,7 +216,7 @@ function partlistToCsvString(array) {
 }
 
 
-//バックアップ読み込み画面に遷移
-function goToBackup(){
+//バックアップ読み込み画面をよびだし
+function goToBackup() {
     hideButton("backupin", false);
 }
