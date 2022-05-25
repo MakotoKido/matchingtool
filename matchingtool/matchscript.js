@@ -6,7 +6,12 @@ function matchcontroller() {
     let escpartlist = []; //マッチングが確定するまでpartlistは書き換えられないようにする 
     round++;
 
-    escpartlist = JSON.parse(JSON.stringify(partlist)); //ディープコピーを作成
+    if (matchmode == 1 && round >= 2) {
+        //トーナメントの2回戦目以降は山を崩さないため、前のラウンドの順番(≒matchids)から配列を作成
+        escpartlist = pickupArray();
+    } else {
+        escpartlist = JSON.parse(JSON.stringify(partlist)); //参加者リストのディープコピーを作成
+    }
     matching = makeMatches(JSON.parse(JSON.stringify(escpartlist))); //配列要素の消去が伴うのでここでもディープコピー
 
     //マッチング結果、結果入力画面を表示する
@@ -38,6 +43,31 @@ function checkResult() {
 function makeMatches(array) {
     let match = []; //対戦組み合わせ格納
     let index = 1;
+
+    //トーナメント1回戦のみ参加者をランダムにし、プレイヤー数を4の倍数にしてマッチング
+    if (round == 1 && matchmode == 1) {
+        shuffle(array);
+
+        let numbye = 4 - (array.length % 4) //4の倍数にするためのbyeの数
+        let byeid = 0; //byeでもidをユニークにしないと不具合が生じるので変更する(負の数に広げていく)
+        for (let i = 0; i < numbye; i++) {
+            //最大3つなので 先頭、末尾、大体真ん中にそれぞれbyeを足す（bye同士のマッチングを防ぐ）
+            if (i == 0) {
+                array.unshift(JSON.parse(JSON.stringify(bye)));
+                array[0].id = byeid;
+                byeid--;
+            } else if (i == 1) {
+                array.push(JSON.parse(JSON.stringify(bye)));
+                array[array.length - 1].id = byeid;
+                byeid--;
+            } else {
+                array.splice((array.length / 2), 0, JSON.parse(JSON.stringify(bye)));
+                array[array.length - 1].id = byeid;
+                byeid--;
+            }
+        }
+    }
+
     while (array[0] != undefined) {//arrayが空になるまでやる
 
         //組み合わせ対象の存在チェック
@@ -64,12 +94,25 @@ function makeMatches(array) {
 
             } else {
                 //トーナメントの場合
-                if(round==1){
-                    //1回戦のみ参加者をランダムにしてマッチング
-                    shuffle(array);
+                //lose=0(無敗)のプレイヤーのみマッチング
+                if (array[0].lose == 0) {
+                    if (array[index].lose == 0) {
+                        //マッチング成立
+                        match.push([array[0], array[index]]);
+
+                        //マッチング済みの要素を削除
+                        array.splice(index, 1);
+                        array.shift();
+
+                    } else {
+                        //以下負け
+                        array.splice(index, 1);
+                        continue;
+                    }
+                } else {
+                    array.shift();
+                    continue;
                 }
-
-
             }
 
 
@@ -168,11 +211,13 @@ function acceptResult(e) {
         //両者勝ちは受け付けない
         alert("両者勝ちになっています。結果を入力しなおしてください。");
     } else if (results[1] == undefined) {
-        //どちらかに空欄がある場合も受け付けない
+        //どちらかに空欄がある場合も受け付けない(0がなければ1もないので1だけでチェックは十分)
         alert("対戦者両者の結果を入力してください。");
-    } else if (ids[2] == 0 && results[1] == "win") {
-        //bye(id=0)に勝利の結果を与える入力も受け付けない
-        alert("byeを勝ちにすることはできません。");
+    } else if (ids[1] <= 0 || ids[2] <= 0) {
+        if (results[0] == "勝ち" || results[1] == "勝ち") {
+            //bye(id<=0)に勝利の結果を与える入力も受け付けない
+            alert("byeを勝ちにすることはできません。");
+        }
     } else {
         //上記をクリアした結果入力と対戦相手の番号oppsをmatchingに格納(この時点では結果を確定しないので上書き可)
         for (let i = 0; i < results.length; i++) {
@@ -187,9 +232,11 @@ function acceptResult(e) {
         }
         alert("結果入力を受け付けました。");
 
+        //全対戦結果が出そろったら確認画面へ
         if (resultaccepted >= matching.length) {
             disableCheckBtn(false);
         }
+
     }
 }
 
@@ -266,11 +313,13 @@ function registerResult() {
 
 //ラウンドで作成したmatchids, matching, resultacceptedを初期化して次ラウンドのマッチング
 function proceedToNext() {
-    matchids = [];
+    //トナメの場合は山保存のため残しておく
+    if (matchmode == 0) {
+        matchids = [];
+    }
     matching = [];
     resultaccepted = 0;
     hideButton("proceed", true);
-
     matchcontroller();
 }
 
@@ -278,5 +327,19 @@ function proceedToNext() {
 //マッチモードの変更を反映する
 function changeMatchMode(value) {
     matchmode = value;
-    console.log(matchmode);
+}
+
+//トナメ山保存用にmatchidsからpartlistをピックアップして同じ形式の配列を生成
+function pickupArray() {
+    let newarray = [];
+    matchids.forEach(match => {
+        let ids = match.split("_");
+        for (let i = 1; i < ids.length; i++) {
+            if (ids[i] != 0) {
+                newarray.push(JSON.parse(JSON.stringify(partlist[ids[i] - 1])));
+            }
+        }
+    });
+    matchids = [];
+    return newarray
 }

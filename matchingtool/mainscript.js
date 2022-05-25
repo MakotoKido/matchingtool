@@ -1,6 +1,6 @@
 //画面の管理、配列操作を行う
 
-let partlist = []; //参加者の情報を格納 構造[{id:num, name:String, win:num, lose:num, draw:num, opps: [ids]}]
+let partlist = []; //参加者の情報を格納 構造[{id:num, name:String, win:num, lose:num, draw:num, opps: [ids]}] インデックスは変えない
 let bye = { id: 0, name: "bye", win: 0, lose: 0, opps: [] }; //不戦勝作成用のダミープレイヤー
 let fileReader = new FileReader();
 
@@ -12,7 +12,7 @@ let matching = [];
 let resultaccepted = 0;
 
 //バックアップ一時保存用
-let backuplist =[];
+let backuplist = [];
 let point = "";
 
 
@@ -142,6 +142,7 @@ function backToFileChoice() {
     document.getElementById("load").disabled = false;
     hideButton("match", true);
     hideButton("backtomatch", true);
+    hideButton("matchmode", true);
 
     //入力したグローバル関数をリセット
     partlist = [];
@@ -156,6 +157,7 @@ function backToInput() {
     hideButton("commitresult", true);
 
     //マッチング表を作成しなおす
+
     changeTable(matchingToTable(matching));
     addELToBtn();
     hideCheckBtn(false);
@@ -202,8 +204,8 @@ function partlistToCsvString(array) {
         inarray.opps.forEach(element => {
             str += element + "_"; //oppsの内容は_で区切る
         });
-        if(str.endsWith("_")){
-            str = str.slice(0,-1);
+        if (str.endsWith("_")) {
+            str = str.slice(0, -1);
         }
 
         str += "\r\n"; // 1次元目の区切りで改行を入れる
