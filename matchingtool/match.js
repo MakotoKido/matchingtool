@@ -1,6 +1,6 @@
 //マッチングを制御するスクリプト
 
-let escpartlist = []; //対戦結果が確定するまでpartlistではなくこちらを書き換える ラウンドごとに書き換える
+let array = []; //対戦結果が確定するまでpartlistではなくこちらを書き換える ラウンドごとに書き換える
 let round = 0; //ラウンド数管理
 let matchids = []; //対戦卓番号と対戦者のid(卓番号_対戦者1のid_対戦者2のid)を格納 結果送信のイベントリスナ付与で使う
 
@@ -8,12 +8,12 @@ let matchids = []; //対戦卓番号と対戦者のid(卓番号_対戦者1のid_
 
 function matchcontroller() {
     round++;
-    escpartlist = partlist.slice(0, partlist.length); //sliceで実体のみをコピー
+    array = partlist.slice(0, partlist.length); //sliceで実体のみをコピー
 
     //対戦組み合わせの作成
-    escpartlist = sortByWin(shuffle(escpartlist));
-    let matching = makeMatches(escpartlist); //ここで一度escpartlistが空になる
-    escpartlist = partlist.slice(0, partlist.length);
+    array = sortByWin(shuffle(array));
+    let matching = makeMatches(array); //ここで一度escpartlistが空になる
+    array = partlist.slice(0, partlist.length);
 
     //マッチング結果を表示
     document.getElementById("fileinput").style.display = "none";
@@ -135,7 +135,7 @@ function matchingToTable(array) {
 
 //送信ボタンにイベントリスナをそれぞれ追加
 function addELToSendBtn() {
-    console.log(escpartlist);
+    console.log(array);
     for (let i = 0; i < matchids.length; i++) {
         document.getElementById(matchids[i]).addEventListener("click", getMatchResults, false);
     }
@@ -143,7 +143,7 @@ function addELToSendBtn() {
 
 //送信ボタンの結果を受け取る
 function getMatchResults(e) {
-    console.log(escpartlist);
+    console.log(array);
     let elements = this.id.split("_"); //送信ボタンを押した対戦の卓番号、参加者id2つを要素数3の配列に分ける
 
     //双方の結果を取得

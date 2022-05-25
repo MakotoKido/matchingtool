@@ -24,6 +24,7 @@ function registerController() {
     };
 
     hideButton("match", false);
+    hideButton("matchmode", false);
 }
 
 

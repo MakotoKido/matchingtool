@@ -5,6 +5,7 @@ let bye = { id: 0, name: "bye", win: 0, lose: 0, opps: [] }; //不戦勝作成�
 let fileReader = new FileReader();
 
 //マッチング関係グローバル変数
+let matchmode = 0; //0がスイス、1がトーナメント
 let round = 0; //ラウンド数管理
 let matchids = [];
 let matching = [];

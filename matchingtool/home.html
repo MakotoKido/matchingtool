@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <title>マッチング作成ツール</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="logo.png">
 </head>
 
 <body>
@@ -46,6 +45,11 @@
     <form id="match" hidden="hidden">
         <button type="button" onclick="matchcontroller()">マッチングを行う</button>
         <button type="button" onclick="backToFileChoice()">ファイル選択に戻る</button>
+    </form>
+
+    <form id="matchmode" hidden="hidden">
+        <label><input type="radio" name="matchmode" value="swiss" onchange="changeMatchMode(0)">スイスドロー</label>
+        <label><input type="radio" name="matchmode" value="tournament" onchange="changeMatchMode(1)">トーナメント</label>
     </form>
 
     <form class="checkresult" hidden="hidden">

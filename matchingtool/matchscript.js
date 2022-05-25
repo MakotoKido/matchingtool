@@ -7,13 +7,12 @@ function matchcontroller() {
     round++;
 
     escpartlist = JSON.parse(JSON.stringify(partlist)); //ディープコピーを作成
-    shuffle(escpartlist);
-    sortByWin(escpartlist);
     matching = makeMatches(JSON.parse(JSON.stringify(escpartlist))); //配列要素の消去が伴うのでここでもディープコピー
 
     //マッチング結果、結果入力画面を表示する
     hideButton("fileinput", true);
     hideButton("match", true);
+    hideButton("matchmode", true);
     hideButton("ranking", false);
     changeTable(matchingToTable(matching));
     addELToBtn();
@@ -40,24 +39,40 @@ function makeMatches(array) {
     let match = []; //対戦組み合わせ格納
     let index = 1;
     while (array[0] != undefined) {//arrayが空になるまでやる
-        //組み合わせ対象のインデックス
 
         //組み合わせ対象の存在チェック
         if (array[index] != undefined) {
+            //matchmodeで形式の判断
+            if (matchmode == 0) {
+                //スイスの場合
+                shuffle(array);
+                sortByWin(array);
 
-            //隣り合うindexで対戦したことがあるかで分岐
-            if (checkForeMatching(array[0].id, array[index].id)) {
-                //次のインデックスに移る
-                index++;
-                continue;
+                //隣り合うindexで対戦したことがあるかで分岐
+                if (checkForeMatching(array[0].id, array[index].id)) {
+                    //次のインデックスに移る
+                    index++;
+                    continue;
+                } else {
+                    match.push([array[0], array[index]]);
+
+                    //マッチング済みの要素を削除
+                    array.splice(index, 1);
+                    array.shift();
+                    index = 1;
+                }
+
             } else {
-                match.push([array[0], array[index]]);
+                //トーナメントの場合
+                if(round==1){
+                    //1回戦のみ参加者をランダムにしてマッチング
+                    shuffle(array);
+                }
 
-                //マッチング済みの要素を削除
-                array.splice(index, 1);
-                array.shift();
-                index = 1;
+
             }
+
+
         } else {
             //組み合わせられる相手がいない場合、不戦勝(id=0)と組み合わせる
             match.push([array[0], bye]);
@@ -74,7 +89,7 @@ function checkForeMatching(id, checked) {
     let boolean = false;
 
     partlist.forEach(element => {
-        if (element.id == checked) {        
+        if (element.id == checked) {
             if (element.opps.indexOf(String(id)) != -1) {
                 boolean = true;
             }
@@ -257,4 +272,11 @@ function proceedToNext() {
     hideButton("proceed", true);
 
     matchcontroller();
+}
+
+
+//マッチモードの変更を反映する
+function changeMatchMode(value) {
+    matchmode = value;
+    console.log(matchmode);
 }
