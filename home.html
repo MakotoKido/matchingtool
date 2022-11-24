@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--処理をすべてこのページで完結させる -->
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>マッチング作成ツール</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>マッチング作成ツール</h1>
+    </header>
+
+    <!-- テーブルの上下に必要なボタンを配置 スクリプトで表示や有効無効を制御-->
+
+    <button type="button" id="buplayer" onclick="createBackUp()">バックアップをDL</button>
+    <button type="button" id="loadbackup" onclick="goToBackup()">バックアップの読み込み</button>
+    <button type="button" id="reload" onclick="initialize()" style="background-color: black; color: white;">初めに戻る</button>
+
+    <form id="fileinput">
+        <p>参加者名を入力したcsvファイル（UTF-8形式）を選んでください。</p>
+        <input type="file" id="inputcsv" accept=".csv" required>
+        <input type="button" id="load" value="読込" onclick="registerController()">
+    </form>
+
+    <form id="backupin" hidden="hidden">
+        <p>ダウンロードしたバックアップ(r~backup.csv)を選んでください。</p>
+        <input type="file" id="inputbackup" accept=".csv" required>
+        <input type="button" value="読込" onclick="loadBackup()">
+        <button type="button" onclick="hideButton('backupin', true)">キャンセル</button>
+    </form>
+
+    <form class="checkresult" hidden="hidden">
+        <button type="button" onclick="checkResult()" disabled>ラウンド結果を確認</button>
+    </form>
+
+    <!-- テーブル中HTMLは直接書き込まない -->
+    <p></p>
+    <div id="table"></div>
+    <p></p>
+    <!-- テーブル中HTMLは直接書き込まない -->
+
+    <form id="match" hidden="hidden">
+        <button type="button" onclick="matchcontroller()">マッチングを行う</button>
+        <button type="button" onclick="backToFileChoice()">ファイル選択に戻る</button>
+    </form>
+
+    <form id="matchmode" hidden="hidden">
+        <label><input type="radio" name="matchmode" value="swiss" onchange="changeMatchMode(0)">スイスドロー</label>
+        <label><input type="radio" name="matchmode" value="tournament" onchange="changeMatchMode(1)">トーナメント</label>
+    </form>
+
+    <form class="checkresult" hidden="hidden">
+        <button type="button" onclick="checkResult()" disabled>ラウンド結果を確認</button>
+    </form>
+
+    <form id="commitresult" hidden="hidden">
+        <button type="button" onclick="registerResult()">確定</button>
+        <button type="button" onclick="backToInput()">修正</button>
+    </form>
+
+    <form id="proceed" hidden="hidden">
+        <button type="button" onclick="proceedToNext()">次のラウンドへ</button>
+    </form>
+    <form id="confirmchange" hidden="hidden">
+        <p id="roundconfirm"></p>
+        <button type="button" onclick="confirmChange()">上記を復元</button>
+    </form>
+        <button type="button" onclick="backToInput()" id="backtomatch" hidden="hidden">対戦表に戻る</button>
+
+        <button type="button" onclick="rankingController()" id="ranking" hidden="hidden">順位を表示</button>
+
+
+
+
+    <script src="mainscript.js"></script>
+    <script src="register.js"></script>
+    <script src="matchscript.js"></script>
+    <script src="ranking.js"></script>
+</body>
+
+</html>
